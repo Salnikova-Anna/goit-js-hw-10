@@ -14,8 +14,8 @@ function fetchBreeds() {
   });
 }
 
-function fetchCatByBreed(breedId) {
-  return fetch(`${BASE_URL}images/search?breed_ids=${breedId}`).then(
+function fetchCatByBreed(selectedBreadId) {
+  return fetch(`${BASE_URL}images/search?breed_ids=${selectedBreadId}`).then(
     response => {
       if (!response.ok) {
         throw new Error(response.statusText);

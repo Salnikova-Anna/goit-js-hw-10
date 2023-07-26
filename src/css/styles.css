@@ -2,8 +2,38 @@
   display: flex;
   justify-content: start;
   gap: 0 20px;
+  margin-top: 30px;
+}
+
+.desc-wrap {
+  width: 500px;
 }
 
 .temperament-title {
   font-weight: 600;
+}
+
+.is-hidden {
+  display: none;
+}
+
+/* ===========LOADER=============== */
+.loader {
+  width: 20px;
+  height: 20px;
+  border: 5px dotted #000;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  animation: rotation 2s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

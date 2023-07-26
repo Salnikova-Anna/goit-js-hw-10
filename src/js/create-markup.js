@@ -7,13 +7,12 @@ function createBreedsListMarkUp(breeds) {
 }
 
 function createCatMarkUp(url, name, description, temperament) {
-  const catMarkUp = `<img src="${url}" alt="${name}" width=400px />
-    <div>
+  return `<img src="${url}" alt="${name}" width=400px />
+    <div class="desc-wrap">
       <h2>${name}</h2>
       <p>${description}</p>
       <p><span class="temperament-title">Temperament:</span> ${temperament}</p>
     </div>`;
-  return catMarkUp;
 }
 
 export { createBreedsListMarkUp, createCatMarkUp };
