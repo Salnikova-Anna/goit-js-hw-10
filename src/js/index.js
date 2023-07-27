@@ -6,10 +6,6 @@ import 'slim-select/dist/slimselect.css';
 import Notiflix from 'notiflix';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-hideElement(refs.catInfo);
-hideElement(refs.error);
-hideElement(refs.breedSelect);
-
 let selectedBreadId = '';
 
 const slimSelect = new SlimSelect({
@@ -25,6 +21,17 @@ const slimSelect = new SlimSelect({
     },
     afterClose: () => {
       fetchCatByBreed(selectedBreadId)
+        .then(data => {
+          const breedUniqId = data[0].id;
+          return fetch(
+            `https://api.thecatapi.com/v1/images/${breedUniqId}`
+          ).then(response => {
+            if (!response.ok) {
+              throw new Error(response.statusText);
+            }
+            return response.json();
+          });
+        })
         .then(({ url, breeds }) => {
           const [{ name, description, temperament }] = breeds;
 
@@ -60,7 +67,6 @@ fetchBreeds()
     }));
 
     slimSelect.setData(breedsIdArray);
-    showElement(refs.breedSelect);
   })
   .catch(error => {
     console.log(error);

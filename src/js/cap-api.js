@@ -18,18 +18,7 @@ function fetchCatByBreed(selectedBreadId) {
     if (!response.ok) {
       throw new Error(response.statusText);
     }
-
-    return response.json().then(data => {
-      const breedUniqId = data[0].id;
-      return fetch(
-        `${BASE_URL}images/${breedUniqId}?x-api-key=${API_KEY}`
-      ).then(response => {
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        return response.json();
-      });
-    });
+    return response.json();
   });
 }
 

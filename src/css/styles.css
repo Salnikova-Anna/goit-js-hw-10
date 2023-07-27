@@ -17,6 +17,14 @@
   display: none;
 }
 
+.breed-select {
+  display: none;
+}
+
+.error {
+  display: none;
+}
+
 /* ===========LOADER=============== */
 .loader {
   width: 20px;
