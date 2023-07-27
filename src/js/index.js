@@ -6,8 +6,6 @@ import Notiflix from 'notiflix';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { slimSelectOptions } from './select-instance';
 
-let selectedBreadId = '';
-
 fetchBreeds()
   .then(breedsList => {
     hideElement(refs.loader);

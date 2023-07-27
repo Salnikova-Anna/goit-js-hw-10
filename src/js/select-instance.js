@@ -5,6 +5,8 @@ import Notiflix from 'notiflix';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { showElement, hideElement } from '.';
 
+let selectedBreadId = '';
+
 export const slimSelectOptions = {
   select: refs.breedSelect,
 
