@@ -1,70 +1,22 @@
-import { fetchBreeds, fetchCatByBreed } from './cap-api';
-import { createCatMarkUp } from './create-markup';
+import { fetchBreeds } from './cap-api';
 import { refs } from './refs';
 import SlimSelect from 'slim-select';
 import 'slim-select/dist/slimselect.css';
 import Notiflix from 'notiflix';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { slimSelectOptions } from './select-instance';
 
 let selectedBreadId = '';
-
-const slimSelect = new SlimSelect({
-  select: refs.breedSelect,
-
-  events: {
-    afterChange: newBreed => {
-      selectedBreadId = newBreed[0].value;
-    },
-    afterOpen: () => {
-      refs.catInfo.innerHTML = '';
-      showElement(refs.loader);
-    },
-    afterClose: () => {
-      fetchCatByBreed(selectedBreadId)
-        .then(data => {
-          const breedUniqId = data[0].id;
-          return fetch(
-            `https://api.thecatapi.com/v1/images/${breedUniqId}`
-          ).then(response => {
-            if (!response.ok) {
-              throw new Error(response.statusText);
-            }
-            return response.json();
-          });
-        })
-        .then(({ url, breeds }) => {
-          const [{ name, description, temperament }] = breeds;
-
-          const catMarkUp = createCatMarkUp(
-            url,
-            name,
-            description,
-            temperament
-          );
-          refs.catInfo.innerHTML = catMarkUp;
-
-          hideElement(refs.loader);
-          showElement(refs.catInfo);
-        })
-        .catch(error => {
-          hideElement(refs.loader);
-          Notiflix.Notify.failure(
-            'Oops! Something went wrong! Try reloading the page!'
-          );
-          console.log(error);
-        });
-    },
-  },
-});
 
 fetchBreeds()
   .then(breedsList => {
     hideElement(refs.loader);
-
     const breedsIdArray = breedsList.map(breed => ({
       text: breed.name,
       value: breed.id,
     }));
+
+    const slimSelect = new SlimSelect(slimSelectOptions);
 
     slimSelect.setData(breedsIdArray);
   })
@@ -90,3 +42,5 @@ function showElement(element) {
 function hideElement(element) {
   element.classList.add('is-hidden');
 }
+
+export { showElement, hideElement };
