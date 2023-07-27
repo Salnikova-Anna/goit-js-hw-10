@@ -1,23 +1,31 @@
 import { fetchBreeds, fetchCatByBreed } from './cap-api';
-import { createBreedsListMarkUp, createCatMarkUp } from './create-markup';
+import { createCatMarkUp } from './create-markup';
 import { refs } from './refs';
 import SlimSelect from 'slim-select';
 import 'slim-select/dist/slimselect.css';
+import Notiflix from 'notiflix';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-refs.catInfo.classList.add('is-hidden');
-refs.error.classList.add('is-hidden');
-refs.breedSelect.classList.add('is-hidden');
+hideElement(refs.catInfo);
+hideElement(refs.error);
+hideElement(refs.breedSelect);
+
+let selectedBreadId = '';
 
 const slimSelect = new SlimSelect({
   select: refs.breedSelect,
-  placeholder: true,
+
   events: {
     afterChange: newBreed => {
-      let selectedBreadId = newBreed[0].value;
-
+      selectedBreadId = newBreed[0].value;
+    },
+    afterOpen: () => {
+      refs.catInfo.innerHTML = '';
+      showElement(refs.loader);
+    },
+    afterClose: () => {
       fetchCatByBreed(selectedBreadId)
         .then(({ url, breeds }) => {
-          refs.loader.classList.add('is-hidden');
           const [{ name, description, temperament }] = breeds;
 
           const catMarkUp = createCatMarkUp(
@@ -27,66 +35,52 @@ const slimSelect = new SlimSelect({
             temperament
           );
           refs.catInfo.innerHTML = catMarkUp;
-          refs.catInfo.classList.remove('is-hidden');
+
+          hideElement(refs.loader);
+          showElement(refs.catInfo);
         })
         .catch(error => {
-          refs.loader.classList.add('is-hidden');
-          refs.error.classList.remove('is-hidden');
+          hideElement(refs.loader);
+          Notiflix.Notify.failure(
+            'Oops! Something went wrong! Try reloading the page!'
+          );
           console.log(error);
         });
-    },
-
-    settings: {
-      placeholderText: 'Select a breed',
     },
   },
 });
 
 fetchBreeds()
-  .then(breeds => {
-    // const breedsListMarkup = createBreedsListMarkUp(breeds);
+  .then(breedsList => {
+    hideElement(refs.loader);
 
-    // console.log(breeds);
-    const breedsIdArray = breeds.map(breed => ({
+    const breedsIdArray = breedsList.map(breed => ({
       text: breed.name,
       value: breed.id,
     }));
+
     slimSelect.setData(breedsIdArray);
-    refs.breedSelect.classList.remove('is-hidden');
-    // refs.loader.classList.add('is-hidden');
-    // selectedBreadId = slimSelect.getSelected();
-    // console.log(selectedBreadId);
-    // console.log(breedsIdArray);
-    // refs.breedSelect.innerHTML = breedsListMarkup;
-    // console.log(refs.breedSelect);
+    showElement(refs.breedSelect);
   })
   .catch(error => {
     console.log(error);
-    refs.loader.classList.add('is-hidden');
-    refs.error.classList.remove('is-hidden');
+    hideElement(refs.loader);
+    Notiflix.Notify.failure(
+      'Oops! Something went wrong! Try reloading the page!'
+    );
   });
 
-// refs.breedSelect.addEventListener('input', handleBreedSelectClick);
+Notiflix.Notify.init({
+  width: '280px',
+  position: 'left-top',
+  distance: '10px',
+  opacity: 1,
+});
 
-// function handleBreedSelectClick(event) {
-//   // const breedId = event.target.value;
-//   console.log(select);
+function showElement(element) {
+  element.classList.remove('is-hidden');
+}
 
-//   fetchCatByBreed(selectedBreadId)
-//     .then(({ url, breeds }) => {
-//       const [{ name, description, temperament }] = breeds;
-
-//       const catMarkUp = createCatMarkUp(url, name, description, temperament);
-//       refs.catInfo.innerHTML = catMarkUp;
-//     })
-//     .catch(error => console.log(error));
-// }
-
-// fetchCatByBreed(selectedBreadId)
-//   .then(({ url, breeds }) => {
-//     const [{ name, description, temperament }] = breeds;
-
-//     const catMarkUp = createCatMarkUp(url, name, description, temperament);
-//     refs.catInfo.innerHTML = catMarkUp;
-//   })
-//   .catch(error => console.log(error));
+function hideElement(element) {
+  element.classList.add('is-hidden');
+}
