@@ -21,18 +21,8 @@ export const slimSelectOptions = {
     afterClose: () => {
       fetchCatByBreed(selectedBreadId)
         .then(data => {
-          const breedUniqId = data[0].id;
-          return fetch(
-            `https://api.thecatapi.com/v1/images/${breedUniqId}`
-          ).then(response => {
-            if (!response.ok) {
-              throw new Error(response.statusText);
-            }
-            return response.json();
-          });
-        })
-        .then(({ url, breeds }) => {
-          const [{ name, description, temperament }] = breeds;
+          const url = data[0].url;
+          const { name, description, temperament } = data[0].breeds[0];
 
           const catMarkUp = createCatMarkUp(
             url,
